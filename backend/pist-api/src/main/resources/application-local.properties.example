@@ -1,0 +1,3 @@
+# Copia este archivo a application-local.properties y completa con tus credenciales
+spring.datasource.username=postgres
+spring.datasource.password=1234
