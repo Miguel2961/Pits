@@ -1,0 +1,93 @@
+<div class="detalle-page">
+  <a routerLink="/cliente/mecanicos" class="back-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <line x1="19" y1="12" x2="5" y2="12"/>
+      <polyline points="12 19 5 12 12 5"/>
+    </svg>
+    Volver al listado
+  </a>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="loader"></div>
+      <p>Cargando...</p>
+    </div>
+  } @else if (!mecanico()) {
+    <div class="empty-state">
+      <p>Mecánico no encontrado.</p>
+    </div>
+  } @else {
+    <div class="detalle-layout">
+      <div class="detalle-main">
+        <div class="profile-header">
+          <div class="profile-avatar">
+            @if (mecanico()!.foto) {
+              <img [src]="mecanico()!.foto" [alt]="mecanico()!.nombre" (error)="$any($event.target).style.display='none'; $any($event.target).nextElementSibling?.classList.add('show')" />
+              <span class="avatar-fallback">{{ mecanico()!.nombre.charAt(0).toUpperCase() }}</span>
+            } @else {
+              <span>{{ mecanico()!.nombre.charAt(0).toUpperCase() }}</span>
+            }
+          </div>
+          <div class="profile-info">
+            <h1>{{ mecanico()!.nombre }}</h1>
+            <p class="profile-city">{{ mecanico()!.ciudad }}</p>
+            <div class="profile-status" [class.available]="mecanico()!.disponible" [class.unavailable]="!mecanico()!.disponible">
+              {{ mecanico()!.disponible ? 'Disponible' : 'No disponible' }}
+            </div>
+          </div>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <span class="info-label">Experiencia</span>
+            <span class="info-value">{{ mecanico()!.experiencia }} años</span>
+          </div>
+          <div class="info-card">
+            <span class="info-label">Edad</span>
+            <span class="info-value">{{ mecanico()!.edad }} años</span>
+          </div>
+          <div class="info-card">
+            <span class="info-label">Contacto</span>
+            <span class="info-value">{{ mecanico()!.contacto }}</span>
+          </div>
+          <div class="info-card">
+            <span class="info-label">Certificación</span>
+            <span class="info-value">{{ mecanico()!.certificacion || 'Sin certificación' }}</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Especialidades</h2>
+          <div class="tags">
+            @for (e of mecanico()!.especialidades; track e.idEspecialidad) {
+              <span class="spec-tag">{{ e.nombre }}</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="detalle-sidebar">
+        <div class="rating-card">
+          <h3>Rating</h3>
+          @if (mecanico()!.rating != null) {
+            <div class="rating-big">
+              <span class="rating-number">{{ mecanico()!.rating | number:'1.1-1' }}</span>
+              <span class="rating-star">&#9733;</span>
+            </div>
+            <p class="rating-count">{{ mecanico()!.cantidadValoraciones }} valoraciones</p>
+          } @else {
+            <p class="no-rating">Sin valoraciones aún</p>
+          }
+        </div>
+
+        <button
+          class="btn-solicitar"
+          (click)="solicitarServicio()"
+          [disabled]="!mecanico()!.disponible"
+        >
+          Solicitar servicio con este mecánico
+        </button>
+      </div>
+    </div>
+  }
+</div>

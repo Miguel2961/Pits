@@ -1,24 +1,11 @@
 import { Component } from '@angular/core';
-import { MecanicoService } from '../../../services/mecanico.service/mecanico.service';
-import { ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-mecanico.component',
+  selector: 'app-mecanico-legacy',
   standalone: true,
-  imports: [CommonModule],
-  templateUrl: './mecanico.component.html',
-  styleUrl: './mecanico.component.css',
+  imports: [CommonModule, RouterLink],
+  template: `<p>Este componente fue reemplazado. <a routerLink="/cliente/mecanicos">Ir al feed de mecánicos</a></p>`,
 })
-export class MecanicoComponent {
-  userMecanico: any[] = [];
-
-  constructor(private mecanicoService: MecanicoService , private cdt: ChangeDetectorRef){
-    this.mecanicoService.getusersMecanico().subscribe(data =>{
-      this.userMecanico = data;
-      console.log(this.userMecanico);
-      this.cdt.detectChanges(); // Detectar cambios manualmente
-    
-    });
-  }
-}
+export class MecanicoComponent {}
