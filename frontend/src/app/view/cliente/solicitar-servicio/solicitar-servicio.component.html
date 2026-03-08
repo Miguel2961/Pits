@@ -1,0 +1,208 @@
+<div class="solicitar-page">
+  <header class="page-header">
+    <h1>Solicitar servicio</h1>
+    <p class="page-subtitle">Conectamos tu vehículo con el mecánico ideal</p>
+  </header>
+
+  <div class="steps-indicator">
+    <div class="step" [class.active]="paso() >= 1" [class.done]="paso() > 1">
+      <span class="step-num">1</span>
+      <span class="step-label">Datos</span>
+    </div>
+    <div class="step-line" [class.active]="paso() > 1"></div>
+    <div class="step" [class.active]="paso() >= 2" [class.done]="paso() > 2">
+      <span class="step-num">2</span>
+      <span class="step-label">Mecánico</span>
+    </div>
+    <div class="step-line" [class.active]="paso() > 2"></div>
+    <div class="step" [class.active]="paso() >= 3">
+      <span class="step-num">3</span>
+      <span class="step-label">Confirmar</span>
+    </div>
+  </div>
+
+  @if (success()) {
+    <div class="success-card">
+      <div class="success-icon">&#10003;</div>
+      <h2>Servicio solicitado</h2>
+      <p>Tu solicitud fue creada correctamente.</p>
+      <button class="btn-primary" (click)="irAHistorial()">Ver historial</button>
+    </div>
+  } @else {
+
+    @if (error()) {
+      <div class="error-banner">{{ error() }}</div>
+    }
+
+    @if (paso() === 1) {
+      <div class="form-card">
+        <h2>Datos del servicio</h2>
+
+        <div class="field">
+          <label>Especialidad requerida</label>
+          @if (errorEspecialidades()) {
+            <p class="field-error">{{ errorEspecialidades() }}</p>
+          }
+          <select [(ngModel)]="especialidadId" name="especialidadId">
+            <option [ngValue]="null" disabled>
+              {{ loadingEspecialidades() ? 'Cargando...' : 'Selecciona una especialidad' }}
+            </option>
+            @for (e of especialidades(); track e.idEspecialidad) {
+              <option [ngValue]="e.idEspecialidad">{{ e.nombre }}</option>
+            }
+          </select>
+          @if (!loadingEspecialidades() && especialidades().length === 0 && !errorEspecialidades()) {
+            <p class="no-data">No hay especialidades disponibles.</p>
+          }
+        </div>
+
+        <div class="field">
+          <label>Vehículo</label>
+          @if (errorVehiculos()) {
+            <p class="field-error">{{ errorVehiculos() }}</p>
+          }
+          @if (loadingVehiculos()) {
+            <p class="loading-msg">Cargando vehículos...</p>
+          } @else if (vehiculos().length > 0) {
+            <select [(ngModel)]="vehiculoId" name="vehiculoId">
+              <option [ngValue]="null" disabled>Selecciona un vehículo</option>
+              @for (v of vehiculos(); track v.idVehiculo) {
+                <option [ngValue]="v.idVehiculo">{{ v.placa }} - {{ v.modelo || v.tipo || 'Vehículo' }}</option>
+              }
+            </select>
+          } @else {
+            <p class="no-vehiculos">No tienes vehículos registrados.</p>
+          }
+          <button class="btn-link" (click)="mostrarFormVehiculo = !mostrarFormVehiculo">
+            {{ mostrarFormVehiculo ? 'Cancelar' : '+ Añadir vehículo' }}
+          </button>
+        </div>
+
+        @if (mostrarFormVehiculo) {
+          <div class="nuevo-vehiculo-form">
+            <div class="nv-row">
+              <div class="field">
+                <label>Placa *</label>
+                <input type="text" [(ngModel)]="nuevoVehiculo.placa" placeholder="ABC123"/>
+              </div>
+              <div class="field">
+                <label>Modelo</label>
+                <input type="text" [(ngModel)]="nuevoVehiculo.modelo" placeholder="Ej: Spark GT"/>
+              </div>
+            </div>
+            <div class="nv-row">
+              <div class="field">
+                <label>Tipo</label>
+                <input type="text" [(ngModel)]="nuevoVehiculo.tipo" placeholder="Sedán, SUV..."/>
+              </div>
+              <div class="field">
+                <label>Color</label>
+                <input type="text" [(ngModel)]="nuevoVehiculo.color" placeholder="Rojo, Blanco..."/>
+              </div>
+            </div>
+            <button class="btn-secondary" (click)="agregarVehiculo()">Guardar vehículo</button>
+          </div>
+        }
+
+        <div class="field">
+          <label>Descripción del servicio</label>
+          <textarea [(ngModel)]="descripcion" rows="3" placeholder="Describe qué necesitas..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-primary" (click)="siguientePaso()" [disabled]="loading()">
+            @if (loading()) {
+              <span class="spinner"></span>
+            } @else {
+              {{ mecanicoSeleccionado ? 'Ir a confirmar' : 'Buscar mecánicos' }}
+            }
+          </button>
+        </div>
+      </div>
+    }
+
+    @if (paso() === 2) {
+      <div class="form-card">
+        <h2>Elige un mecánico</h2>
+        <p class="form-hint">Estos mecánicos tienen la especialidad que necesitas</p>
+
+        @if (mecanicos().length === 0) {
+          <p class="empty-msg">No se encontraron mecánicos con esa especialidad.</p>
+        }
+
+        <div class="mecanico-list">
+          @for (m of mecanicos(); track m.idMecanico) {
+            <button
+              class="mecanico-option"
+              [class.disabled-option]="!m.disponible"
+              [disabled]="!m.disponible"
+              (click)="seleccionarMecanico(m)"
+            >
+              <div class="mo-avatar">{{ m.nombre.charAt(0) }}</div>
+              <div class="mo-info">
+                <span class="mo-name">{{ m.nombre }}</span>
+                <span class="mo-meta">{{ m.ciudad }} &middot; {{ m.experiencia }} años exp.</span>
+              </div>
+              <div class="mo-right">
+                @if (m.rating != null) {
+                  <span class="mo-rating"><span class="star">&#9733;</span> {{ m.rating | number:'1.1-1' }}</span>
+                }
+                <span class="mo-status" [class.available]="m.disponible">
+                  {{ m.disponible ? 'Disponible' : 'No disponible' }}
+                </span>
+              </div>
+            </button>
+          }
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-secondary" (click)="volverPaso(1)">Volver</button>
+        </div>
+      </div>
+    }
+
+    @if (paso() === 3) {
+      <div class="form-card">
+        <h2>Confirmar solicitud</h2>
+
+        <div class="resumen">
+          <div class="resumen-item">
+            <span class="resumen-label">Mecánico</span>
+            <span class="resumen-value">{{ mecanicoSeleccionado?.nombre }}</span>
+          </div>
+          <div class="resumen-item">
+            <span class="resumen-label">Especialidad</span>
+            <span class="resumen-value">
+              @for (e of especialidades(); track e.idEspecialidad) {
+                @if (e.idEspecialidad === especialidadId) { {{ e.nombre }} }
+              }
+            </span>
+          </div>
+          <div class="resumen-item">
+            <span class="resumen-label">Vehículo</span>
+            <span class="resumen-value">
+              @for (v of vehiculos(); track v.idVehiculo) {
+                @if (v.idVehiculo === vehiculoId) { {{ v.placa }} - {{ v.modelo || v.tipo || '' }} }
+              }
+            </span>
+          </div>
+          <div class="resumen-item">
+            <span class="resumen-label">Descripción</span>
+            <span class="resumen-value">{{ descripcion }}</span>
+          </div>
+        </div>
+
+        <div class="form-actions two-btns">
+          <button class="btn-secondary" (click)="volverPaso(mecanicoSeleccionado ? 1 : 2)">Volver</button>
+          <button class="btn-primary" (click)="confirmar()" [disabled]="loading()">
+            @if (loading()) {
+              <span class="spinner"></span>
+            } @else {
+              Confirmar solicitud
+            }
+          </button>
+        </div>
+      </div>
+    }
+  }
+</div>

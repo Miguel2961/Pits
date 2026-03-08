@@ -1,0 +1,10 @@
+package com.pits.pist_api.repository;
+
+import com.pits.pist_api.entity.Historial;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface HistorialRepository extends JpaRepository<Historial, Long> {
+    List<Historial> findByClienteIdCliente(Long idCliente);
+}

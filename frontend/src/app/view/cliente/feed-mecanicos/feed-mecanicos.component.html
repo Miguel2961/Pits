@@ -1,0 +1,84 @@
+<div class="feed-page">
+  <header class="page-header">
+    <h1>Mecánicos</h1>
+    <p class="page-subtitle">Encuentra el especialista ideal para tu vehículo</p>
+  </header>
+
+  <div class="filters-bar">
+    <div class="filter-group">
+      <label>Especialidad</label>
+      <select [(ngModel)]="filtroEspecialidad" (ngModelChange)="aplicarFiltros()">
+        <option [ngValue]="null">Todas</option>
+        @for (e of especialidades(); track e.idEspecialidad) {
+          <option [ngValue]="e.idEspecialidad">{{ e.nombre }}</option>
+        }
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Ciudad</label>
+      <input
+        type="text"
+        [(ngModel)]="filtroCiudad"
+        placeholder="Ej: Medellín"
+        (keyup.enter)="aplicarFiltros()"
+      />
+    </div>
+    <button class="btn-filter" (click)="aplicarFiltros()">Filtrar</button>
+    <button class="btn-filter-clear" (click)="limpiarFiltros()">Limpiar</button>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="loader"></div>
+      <p>Cargando mecánicos...</p>
+    </div>
+  } @else if (mecanicos().length === 0) {
+    <div class="empty-state">
+      <p>No se encontraron mecánicos con los filtros seleccionados.</p>
+    </div>
+  } @else {
+    <div class="mecanicos-grid">
+      @for (m of mecanicos(); track m.idMecanico) {
+        <a [routerLink]="['/cliente/mecanicos', m.idMecanico]" class="mecanico-card">
+          <div class="card-header-strip"></div>
+          <div class="card-body">
+            <div class="card-avatar">
+              @if (m.foto) {
+                <img [src]="m.foto" [alt]="m.nombre" (error)="$any($event.target).style.display='none'; $any($event.target).nextElementSibling?.classList.add('show')" />
+                <span class="avatar-fallback">{{ m.nombre.charAt(0).toUpperCase() }}</span>
+              } @else {
+                <span>{{ m.nombre.charAt(0).toUpperCase() }}</span>
+              }
+            </div>
+            <h3 class="card-name">{{ m.nombre }}</h3>
+            <p class="card-city">{{ m.ciudad }}</p>
+
+            <div class="card-specs">
+              @for (e of m.especialidades; track e.idEspecialidad) {
+                <span class="spec-tag">{{ e.nombre }}</span>
+              }
+            </div>
+
+            <div class="card-meta">
+              <span class="meta-item">
+                <strong>{{ m.experiencia }}</strong> años exp.
+              </span>
+              <span class="meta-item rating" [class.no-rating]="m.rating == null">
+                @if (m.rating != null) {
+                  <span class="star">&#9733;</span> {{ m.rating | number:'1.1-1' }}
+                  <span class="rating-count">({{ m.cantidadValoraciones }})</span>
+                } @else {
+                  Sin rating
+                }
+              </span>
+            </div>
+
+            <div class="card-status" [class.available]="m.disponible" [class.unavailable]="!m.disponible">
+              {{ m.disponible ? 'Disponible' : 'No disponible' }}
+            </div>
+          </div>
+        </a>
+      }
+    </div>
+  }
+</div>

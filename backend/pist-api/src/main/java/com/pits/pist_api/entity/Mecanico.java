@@ -38,9 +38,19 @@ public class Mecanico {
     @Column(length = 100)
     private String ciudad;
 
+    @Column(name = "foto", length = 500)
+    private String foto;
+
     @Column(name = "disponible", nullable = false)
     @Builder.Default
     private Boolean disponible = true;
+
+    @Column(name = "rating")
+    private Double rating;
+
+    @Column(name = "cantidad_valoraciones", nullable = false)
+    @Builder.Default
+    private Integer cantidadValoraciones = 0;
 
     @ManyToMany
     @JoinTable(
