@@ -8,7 +8,9 @@ target/
 .mvn/wrapper/maven-wrapper.jar
 HELP.md
 
-# Spring Boot – credenciales locales (no subir)
+# Spring Boot – credenciales (no subir)
+backend/pist-api/src/main/resources/application.properties
+backend/pist-api/src/main/resources/application-local.properties
 **/application-local.properties
 **/application.properties
 
