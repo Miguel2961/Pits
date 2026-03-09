@@ -1,1 +1,111 @@
-/* You can add global styles to this file, and also import other style files */
+/* Dark theme (default) */
+:root,
+[data-theme="dark"] {
+  --bg-deep: #0a0a0f;
+  --bg-surface: #12121c;
+  --bg-card: #1a1a2e;
+  --bg-card-hover: #222240;
+  --bg-input: #16162a;
+  --accent: #f0a500;
+  --accent-hover: #d4920a;
+  --accent-glow: rgba(240, 165, 0, 0.25);
+  --racing-red: #e63946;
+  --success: #2ec4b6;
+  --text: #eaeaea;
+  --text-muted: #8b8fa3;
+  --text-dim: #555770;
+  --border: #2a2a42;
+  --border-accent: #3a3a5c;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --font-display: 'Rajdhani', sans-serif;
+  --font-body: 'Outfit', sans-serif;
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 30px var(--accent-glow);
+  --body-bg-image: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(240, 165, 0, 0.06) 0%, transparent 70%),
+    linear-gradient(180deg, var(--bg-deep) 0%, #0d0d18 100%);
+}
+
+/* Light theme */
+[data-theme="light"] {
+  --bg-deep: #f0f0f4;
+  --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8f8fc;
+  --bg-input: #f5f5f9;
+  --accent: #c77b00;
+  --accent-hover: #a36600;
+  --accent-glow: rgba(199, 123, 0, 0.2);
+  --racing-red: #c62828;
+  --success: #1a9e8e;
+  --text: #1a1a2e;
+  --text-muted: #555770;
+  --text-dim: #8b8fa3;
+  --border: #e0e0ec;
+  --border-accent: #d0d0dc;
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);
+  --shadow-glow: 0 0 24px var(--accent-glow);
+  --body-bg-image: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(199, 123, 0, 0.06) 0%, transparent 70%),
+    linear-gradient(180deg, var(--bg-deep) 0%, #e8e8f0 100%);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font-body);
+  background: var(--bg-deep);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-image: var(--body-bg-image);
+  background-attachment: fixed;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+a:hover {
+  color: var(--accent-hover);
+}
+
+button, .btn {
+  font-family: var(--font-display);
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+input, select, textarea {
+  font-family: var(--font-body);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-accent);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
