@@ -13,10 +13,13 @@ COPY src ./src
 RUN ./mvnw -DskipTests clean package -B
 
 FROM eclipse-temurin:21-jre-alpine
+RUN apk add --no-cache socat
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
-# Render inyecta PORT=10000 en runtime; EXPOSE 10000 para que el escáner de Render compruebe el puerto correcto
+# Render exige que algo escuche en PORT desde el primer momento. Socat abre PORT y reenvía a la app (8080).
+# La app tarda ~40s en arrancar; así Render detecta el puerto al instante y el tráfico llega cuando Java está listo.
 ENV PORT=10000
+ENV APP_PORT=8080
 EXPOSE 10000
-ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT} -Dserver.address=0.0.0.0 -Dspring.jpa.defer-datasource-initialization=true -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "socat TCP-LISTEN:${PORT},fork,reuseaddr TCP:localhost:${APP_PORT} & exec java -Dserver.port=${APP_PORT} -Dserver.address=0.0.0.0 -jar app.jar"]
