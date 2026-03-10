@@ -1,3 +1,4 @@
+# Build context debe ser esta carpeta (backend/pist-api). En Render: Docker Build Context = backend/pist-api
 FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /app
 
@@ -17,4 +18,5 @@ COPY --from=build /app/target/*.jar app.jar
 
 ENV PORT=8080
 EXPOSE $PORT
+ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT} -jar app.jar"]
 ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT} -jar app.jar"]
