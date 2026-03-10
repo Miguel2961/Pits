@@ -1,0 +1,23 @@
+# Build output (no enviar al contexto Docker)
+target/
+
+# Git
+.git
+.gitignore
+
+# IDE / OS
+.idea
+.vscode
+*.iml
+.DS_Store
+Thumbs.db
+
+# Logs y temporales
+*.log
+*.tmp
+
+# Scripts SQL (no necesarios en la imagen)
+scripts/
+
+# Ejemplo de properties (secretos van por env)
+*.example
